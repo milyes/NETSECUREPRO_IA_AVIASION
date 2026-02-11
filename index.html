@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORBITRON OS // NetSecurePro</title>
+    <style>
+        :root {
+            --neon: #00f2ff;
+            --ubuntu: #E95420;
+            --bg: #020508;
+            --panel: rgba(0, 15, 25, 0.9);
+            --border: rgba(0, 242, 255, 0.4);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg); font-family: 'Ubuntu', sans-serif;
+            color: var(--neon); overflow: hidden;
+        }
+
+        canvas#matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+
+        #top-bar {
+            height: 35px; background: rgba(0, 0, 0, 0.95);
+            border-bottom: 1px solid var(--neon);
+            display: flex; align-items: center; padding: 0 15px;
+            justify-content: space-between; font-size: 0.7em; z-index: 100;
+        }
+
+        .window {
+            position: absolute; background: var(--panel);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+            backdrop-filter: blur(8px); display: flex; flex-direction: column;
+            min-width: 350px;
+        }
+
+        .window-header {
+            padding: 8px 12px; cursor: move; display: flex; justify-content: space-between;
+            font-weight: bold; font-size: 0.65em; border-bottom: 1px solid var(--border);
+        }
+
+        .netsecure-header { background: #0044cc !important; color: white !important; }
+
+        .window-content { padding: 0; flex-grow: 1; overflow: hidden; height: 450px; }
+        
+        iframe { width: 100%; height: 100%; border: none; }
+
+        #terminal-output { 
+            color: #00ff41; font-family: monospace; padding: 10px;
+            height: 180px; overflow-y: auto; font-size: 0.8em;
+        }
+        
+        input {
+            width: 100%; background: transparent; border: none; color: white;
+            outline: none; border-top: 1px solid var(--border); padding: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div id="top-bar">
+    <div>ORBITRON_OS // <span style="color:var(--ubuntu)">AVIASION_PHASE1</span></div>
+    <div id="status">SHIELD: ACTIVE // THREAT: GREEN</div>
+    <div id="clock">00:00:00</div>
+</div>
+
+<div class="window" id="win-term" style="top: 50px; left: 20px; width: 450px;">
+    <div class="window-header"><span>>_ KERNEL_CONSOLE</span><span>[ - ]</span></div>
+    <div class="window-content">
+        <div id="terminal-output"></div>
+        <input type="text" id="cmd-input" placeholder="Tapez 'guide' ou 'status'..." autofocus>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('cmd-input');
+    const output = document.getElementById('terminal-output');
+
+    // MATRIX EFFECT
+    const mCanvas = document.getElementById('matrix');
+    const mCtx = mCanvas.getContext('2d');
+    mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight;
+    const drops = Array(Math.floor(mCanvas.width/20)).fill(1);
+    function drawMatrix() {
+        mCtx.fillStyle = "rgba(2, 5, 8, 0.15)"; mCtx.fillRect(0,0,mCanvas.width,mCanvas.height);
+        mCtx.fillStyle = "#00f2ff"; mCtx.font = "14px monospace";
+        drops.forEach((y, i) => {
+            mCtx.fillText(Math.random() > 0.5 ? "1":"0", i*20, y*20);
+            if(y*20 > mCanvas.height && Math.random() > 0.98) drops[i] = 0;
+            drops[i]++;
+        });
+    }
+    setInterval(drawMatrix, 50);
+
+    // COMMANDS
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const val = input.value.toLowerCase().trim();
+            output.innerHTML += `<br><span style="color:white">> ${val}</span>`;
+            
+            if (val === 'guide') {
+                output.innerHTML += `<br>[OK] Ouverture du Guide NetSecurePro...`;
+                window.open('https://milyes.github.io/NetSecurePro_IA_Guide/', '_blank');
+            } 
+            else if (val === 'status') {
+                output.innerHTML += `<br>[SYS] IA22 v2.6 PRO : FONCTIONNEL<br>[SYS] MARLOO SYNC : OK (45min/cycle)`;
+            }
+            else if (val === 'help') {
+                output.innerHTML += `<br>COMMANDES : guide, status, clear.`;
+            }
+            else if (val === 'clear') { output.innerHTML = ""; }
+            
+            input.value = '';
+            output.scrollTop = output.scrollHeight;
+        }
+    });
+
+    window.onload = () => {
+        output.innerHTML = `[SYSTEM] Orbitron OS v4.5 LOADED.<br>[INFO] Projet AVIASION Phase 1 Actif.`;
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    };
+</script>
+</body>
+</html>
